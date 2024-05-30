@@ -172,6 +172,22 @@ class ViewController: NSViewController {
                 }
             }
         }
+
+        controller?.onDoubleTapDetected = { [weak self] direction in
+            guard Preferences.shared.doubleTapToSitStand else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                if direction == .up {
+                    self?.stand()
+                }
+
+                if direction == .down {
+                    self?.sit()
+                }
+            }
+        }
         
     }
     
@@ -233,11 +249,10 @@ class ViewController: NSViewController {
     }
     
     @IBAction func sit(_ sender: Any) {
-        
         guard let button = sitButton else {
             return
         }
-        
+
         if button.title == stopLabelString {
             controller?.stopMoving()
         } else {
@@ -245,19 +260,28 @@ class ViewController: NSViewController {
             controller?.moveToPosition(.sit)
         }
     }
+
+    private func sit() {
+        controller?.stopMoving()
+        controller?.moveToPosition(.sit)
+    }
     
     @IBAction func stand(_ sender: Any) {
-        
         guard let button = standButton else {
             return
         }
-        
+
         if button.title == stopLabelString {
             controller?.stopMoving()
         } else {
             button.title = stopLabelString
             controller?.moveToPosition(.stand)
         }
+    }
+
+    private func stand() {
+        controller?.stopMoving()
+        controller?.moveToPosition(.stand)
     }
     
     @IBAction func showPreferences(_ sender: Any) {
@@ -266,5 +290,4 @@ class ViewController: NSViewController {
         popover?.performClose(self)
     }
 }
-
 
